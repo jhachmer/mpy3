@@ -1,7 +1,17 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
 [project]
 name = "mpy3"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = ["ruff>=0.9.5"]
+dependencies = [
+    "black>=25.1.0",
+    "isort>=6.0.0",
+    "mypy>=1.15.0",
+    "pytest>=8.3.4",
+    "ruff>=0.9.5",
+]
