@@ -1,4 +1,6 @@
-from mpy3.IDV3.ID3V1.v1genres import ID3V1Genre
+import logging
+
+from mpy3.ID3.ID3V1.v1genres import ID3V1Genre
 from mpy3.Reader.reader import ByteReader
 
 
@@ -33,6 +35,7 @@ class ID3V1Tag:
 
 class ID3V1Parser(object):
     def __init__(self, filename: str):
+        self.filename: str = filename
         self._reader: ByteReader = ByteReader(filename)
         self._reader.seek(-128, 2)
         self.data: bytes = self._reader.read(128)
@@ -49,19 +52,20 @@ class ID3V1Parser(object):
     def parse(self) -> dict[str, str]:
         tag: bytes = self.read(3)
         if tag != b"TAG":
-            raise ID3V1TagError("No ID3v1 tag found")
-            # try:
-        title: str = self.read(30).decode("utf-8").strip("\x00")
-        artist: str = self.read(30).decode("utf-8").strip("\x00")
-        album: str = self.read(30).decode("utf-8").strip("\x00")
-        year: str = self.read(4).decode("utf-8").strip("\x00")
-        year = year if year.isdigit() else "0"
-        comment: str = self.read(30).decode("utf-8").rstrip("\x00").strip()
-        genre: int = self.read(1)[0]
-        if genre > 191:
-            genre = 12
-        # except UnicodeDecodeError:
-        #    raise ID3V1TagError("Error decoding ID3v1 tag")
+            raise ID3V1TagError(f"No ID3v1 tag found in file {self.filename}")
+        try:
+            title: str = self.read(30).decode("utf-8").strip("\x00")
+            artist: str = self.read(30).decode("utf-8").strip("\x00")
+            album: str = self.read(30).decode("utf-8").strip("\x00")
+            year: str = self.read(4).decode("utf-8").strip("\x00")
+            year = year if year.isdigit() else "0"
+            comment: str = self.read(30).decode("utf-8").strip("\x00").strip()
+            genre: int = self.read(1)[0]
+            if genre > 191:
+                genre = 12
+        except UnicodeDecodeError as e:
+            logging.error(f"Error decoding ID3v1 tag for file: {self.filename}\n{e}")
+            pass
 
         return {
             "title": title,
