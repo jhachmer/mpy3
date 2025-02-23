@@ -14,4 +14,15 @@ dependencies = [
     "mypy>=1.15.0",
     "pytest>=8.3.4",
     "ruff>=0.9.5",
+    "sphinx>=8.2.1",
 ]
+
+[tool.black]
+line-length = 88
+
+[tool.ruff]
+exclude = [".venv", "logs"]
+line-length = 88
+
+[tool.ruff.lint]
+select = ["F", "E", "W", "N", "I", "C90", "B", "C4", "A"]
