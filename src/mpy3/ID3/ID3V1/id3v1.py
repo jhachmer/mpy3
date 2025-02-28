@@ -8,7 +8,7 @@ class ID3V1TagError(Exception):
     pass
 
 
-class ID3V1Tag:
+class ID3V1Tag(object):
     def __init__(self, filename: str) -> None:
         _parser: ID3V1Parser = ID3V1Parser(filename)
         data: dict[str, str] = _parser.parse()
@@ -42,6 +42,9 @@ class ID3V1Parser(object):
         self.position: int = 0
         self._reader.close()
 
+    def _check_tag(self, tag: bytes) -> bool:
+        return tag == b"TAG"
+
     def read(self, size: int) -> bytes:
         if self.position + size > len(self.data):
             raise EOFError("Trying to read beyond end of data")
@@ -51,7 +54,7 @@ class ID3V1Parser(object):
 
     def parse(self) -> dict[str, str]:
         tag: bytes = self.read(3)
-        if tag != b"TAG":
+        if not self._check_tag(tag):
             raise ID3V1TagError(f"No ID3v1 tag found in file {self.filename}")
         try:
             title: str = self.read(30).decode("utf-8").strip("\x00")
