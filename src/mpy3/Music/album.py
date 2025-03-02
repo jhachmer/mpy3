@@ -34,7 +34,6 @@ class Album:
     artist: str
     year: int
     tracks: list[Track]
-    total_tracks: int = 0
 
     def __repr__(self) -> str:
         return f"{self.artist} - {self.title} ({self.year})"
@@ -44,6 +43,12 @@ class Album:
             f"{self.artist} - {self.title} ({self.year})\n"
             f"{'\n'.join([str(track) for track in self.tracks])}"
         )
+
+    def __getitem__(self, pos: int) -> Track:
+        return self.tracks[pos]
+
+    def __len__(self) -> int:
+        return len(self.tracks)
 
     def add_track_to_album(self, track: Track) -> None:
         self.tracks.append(track)

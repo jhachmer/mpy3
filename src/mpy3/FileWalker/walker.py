@@ -37,9 +37,7 @@ class Walker:
                     if not tree.check_artist(track.artist):
                         tree.map[track.artist] = {}
                     if not tree.check_album(track.artist, track.album):
-                        tree.add_album(
-                            Album(track.album, track.artist, track.year, [], 0)
-                        )
+                        tree.add_album(Album(track.album, track.artist, track.year, []))
                     track.track_number = (
                         len(tree.map[track.artist][track.album].tracks) + 1
                     )
