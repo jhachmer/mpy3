@@ -5,10 +5,14 @@ from mpy3.Reader.reader import ByteReader
 
 
 class ID3V1TagError(Exception):
+    """Error for invalid files with no valid tag"""
+
     pass
 
 
 class ID3V1Tag(object):
+    """ID3V1 Tag class"""
+
     def __init__(self, filename: str) -> None:
         _parser: ID3V1Parser = ID3V1Parser(filename)
         data: dict[str, str] = _parser.parse()
@@ -34,27 +38,65 @@ class ID3V1Tag(object):
 
 
 class ID3V1Parser(object):
+    """Class to read ID3V1 Tags from mp3 files"""
+
     def __init__(self, filename: str):
         self.filename: str = filename
-        self._reader: ByteReader = ByteReader(filename)
-        self._reader.seek(-128, 2)
-        self.data: bytes = self._reader.read(128)
-        self.position: int = 0
-        self._reader.close()
+        try:
+            with ByteReader(self.filename) as reader:
+                reader.seek(-128, 2)
+                self.data: bytes = reader.read(128)
+                self.position: int = 0
+        except Exception:
+            logging.error(f"error while parsing file {self.filename}")
 
-    def _check_tag(self, tag: bytes) -> bool:
+    def check_tag(self, tag: bytes) -> bool:
+        """Checks the first 3 bytes of ID3 Frame for validity
+            Valid ID3V1 Tag must have the first 3 bytes set to 'TAG'
+        Args:
+            tag (bytes): First 3 bytes of ID3 Tag
+
+        Returns:
+            bool: Returns true if bytes are valid
+        """
         return tag == b"TAG"
 
-    def read(self, size: int) -> bytes:
-        if self.position + size > len(self.data):
+    def read(self, n: int) -> bytes:
+        """Reads n amount of bytes from data field
+
+        Args:
+            size (int): size of bytes to read
+
+        Raises:
+            EOFError: Raises EOFError if trying to read beyond end of file
+
+        Returns:
+            bytes: Returns n bytes from data
+        """
+        if self.position + n > len(self.data):
             raise EOFError("Trying to read beyond end of data")
-        result: bytes = self.data[self.position : self.position + size]
-        self.position += size
+        result: bytes = self.data[self.position : self.position + n]
+        self.position += n
         return result
 
     def parse(self) -> dict[str, str]:
+        """Parses data bytes and extracts ID3 Tag from it
+         Returned Tags:
+         Title
+         Artist
+         Album
+         Year
+         Comment
+         Genre
+
+        Raises:
+            ID3V1TagError: Raises Tag Error when there is no valid ID3 Tag
+
+        Returns:
+            dict[str, str]: Returns dictionary of Fieldname Keys and Values
+        """
         tag: bytes = self.read(3)
-        if not self._check_tag(tag):
+        if not self.check_tag(tag):
             raise ID3V1TagError(f"No ID3v1 tag found in file {self.filename}")
         try:
             title: str = self.read(30).decode("utf-8").strip("\x00")
