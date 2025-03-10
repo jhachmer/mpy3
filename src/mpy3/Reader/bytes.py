@@ -34,11 +34,12 @@ class ByteReader(object):
 
         Args:
             position (int): new position of read pointer
-            whence (int, optional): os.SEEK_SET or 0 -- start of stream (the default);
-             offset should be zero or positive
-             os.SEEK_CUR or 1 -- current stream position; offset may be negative
-             os.SEEK_END or 2 -- end of stream; offset is usually negative.
-             Defaults to 0.
+            whence (int, optional):
+              os.SEEK_SET or 0 -- start of stream (the default);
+                offset should be zero or positive
+              os.SEEK_CUR or 1 -- current stream position; offset may be negative
+              os.SEEK_END or 2 -- end of stream; offset is usually negative.
+              Defaults to 0.
         """
         self.file.seek(position, whence)
 
