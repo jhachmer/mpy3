@@ -1,7 +1,7 @@
 import logging
 import os
 
-from mpy3.ID3.ID3V1.id3v1 import ID3V1Tag, ID3V1TagError
+from mpy3.ID3.id3v1 import ID3V1Tag, ID3V1TagError
 from mpy3.Music.album import Album, Track
 
 
