@@ -1,7 +1,7 @@
 import logging
 
-from mpy3.ID3.ID3V1.v1genres import ID3V1Genre
-from mpy3.Reader.reader import ByteReader
+from mpy3.ID3.v1genres import ID3V1Genre
+from mpy3.Reader.bytes import ByteReader
 
 
 class ID3V1TagError(Exception):
