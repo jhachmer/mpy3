@@ -41,3 +41,7 @@ class ID3V2Parser(object):
                 f"ID3v2.{version}.{revision} is not supported"
             )
         return (version, revision)
+
+
+class VersionReader(object):
+    pass
